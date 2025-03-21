@@ -71,3 +71,17 @@ Este projeto é o frontend para a aplicação de cadastro de usuários. Ele perm
 * Melhorar o tratamento de erros e as mensagens para o usuário.
 * Adicionar testes unitários e de integração.
 * Configurar o deploy em um ambiente de produção.
+
+# Arquitetura do Sistema
+
+## Diagrama de Contexto
+
+![alt text](image.png)
+
+## Diagrama de Contêineres
+
+![alt text](image-1.png)
+
+## Diagrama de Componentes
+
+![alt text](image-2.png)

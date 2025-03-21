@@ -1,0 +1,15 @@
+@startuml context_diagram
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+
+title Diagrama de Contexto - Sistema Omnichannel
+
+Person(cliente, "Cliente", "Usuário que interage com o sistema através de diferentes canais.")
+
+System(sistema_omnichannel, "Sistema Omnichannel", "Sistema que unifica a experiência do cliente em diferentes canais.")
+
+System_Ext(viacep, "ViaCEP", "API externa para validação de endereços.")
+
+Rel(cliente, sistema_omnichannel, "Interage com o sistema para criar conta e receber mensagens.")
+Rel(sistema_omnichannel, viacep, "Consulta endereços válidos durante o cadastro.")
+
+@enduml

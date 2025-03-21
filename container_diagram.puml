@@ -1,0 +1,20 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+title Diagrama de Contêineres - Sistema Omnichannel
+
+Person(cliente, "Cliente", "Usuário que interage com o sistema através de diferentes canais.")
+
+System_Boundary(sistema, "Sistema Omnichannel") {
+    Container(web_app, "Aplicação Web", "Next.js, Tailwind, Ant Design", "Frontend da aplicação.")
+    Container(api, "API Backend", "Spring Boot", "Backend da aplicação que gerencia a lógica de negócio.")
+    Container(db, "Banco de Dados", "PostgreSQL", "Armazena dados dos usuários e interações.")
+}
+
+System_Ext(viacep, "ViaCEP", "API externa para validação de endereços.")
+
+Rel(cliente, web_app, "Interage com a aplicação web para criar conta e receber mensagens.")
+Rel(web_app, api, "Faz requisições para o backend.")
+Rel(api, db, "Armazena e recupera dados do banco de dados.")
+Rel(api, viacep, "Consulta endereços válidos durante o cadastro.")
+@enduml

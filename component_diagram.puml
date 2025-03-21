@@ -1,0 +1,17 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Component.puml
+
+title Diagrama de Componentes - Backend (Spring Boot)
+
+Container(api, "API Backend", "Spring Boot", "Backend da aplicação que gerencia a lógica de negócio.")
+
+Component(user_controller, "UserController", "Controlador REST", "Expõe endpoints para criação e gerenciamento de usuários.")
+Component(user_service, "UserService", "Serviço de Usuário", "Implementa a lógica de negócio relacionada a usuários.")
+Component(user_repository, "UserRepository", "Repositório de Usuários", "Responsável por interagir com o banco de dados.")
+Component(address_validator, "AddressValidator", "Validador de Endereço", "Valida endereços usando a API ViaCEP.")
+
+Rel(user_controller, user_service, "Chama métodos do serviço.")
+Rel(user_service, user_repository, "Persiste e recupera dados do banco.")
+Rel(user_service, address_validator, "Valida endereços durante o cadastro.")
+
+@enduml
