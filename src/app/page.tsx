@@ -1,13 +1,16 @@
-"use client"
+"use client";
 
 import React, { useState } from 'react';
-import { Form, Input, Button, message } from 'antd';
+import { Form, Input, Button, Switch } from 'antd';
 import { User } from '@/types/user';
 import { UserService } from './services/UserService';
+import toast, { Toaster } from 'react-hot-toast';
+import { MoonOutlined, SunOutlined } from '@ant-design/icons'; // Ícones do Ant Design
 
 const UserForm = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [theme, setTheme] = useState<'light' | 'dark'>('light'); // Estado para controlar o tema
   const userService = new UserService();
 
   const onFinish = async (values: any) => {
@@ -24,77 +27,114 @@ const UserForm = () => {
       const createdUser = await userService.createUser(newUser);
 
       if (createdUser) {
-        message.success('User created successfully!');
+        toast.success('Usuário criado com sucesso!');
         form.resetFields();
       } else {
-        message.error('Error creating user.');
+        toast.error('Erro ao criar usuário, email de usuário já existente.');
       }
     } catch (error: any) {
-      message.error(`Error creating user: ${error.message}`);
+      let errorMessage = 'Erro ao criar usuário.';
+      if (error instanceof Error && error.message) {
+        errorMessage = error.message;
+      }
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
   const validateZipCode = async (_: any, value: string) => {
-    if (!value) {
-      return Promise.reject('Please enter your Zip Code!');
-    }
     if (value.length !== 8) {
-      return Promise.reject('Zip Code must have 8 digits');
+      return Promise.reject('O CEP deve ter 8 dígitos');
     }
     try {
       const response = await fetch(`https://viacep.com.br/ws/${value}/json/`);
       const data = await response.json();
       if (data.erro) {
-        return Promise.reject('Invalid Zip Code!');
+        return Promise.reject('CEP inválido!');
       }
       return Promise.resolve();
     } catch (error) {
-      return Promise.reject('Error validating Zip Code!');
+      return Promise.reject('Erro ao validar CEP!');
     }
   };
 
+  const toggleTheme = (checked: boolean) => {
+    setTheme(checked ? 'dark' : 'light');
+  };
+
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
-      <div className="bg-white p-8 rounded shadow-md w-96">
-        <h2 className="text-2xl font-semibold mb-4">Create User</h2>
+    <div className={`flex justify-center items-center min-h-screen ${theme === 'light' ? 'bg-gray-100' : 'bg-gray-900'}`}>
+      <div className={`${theme === 'light' ? 'bg-white' : 'bg-gray-800'} p-8 rounded-lg shadow-lg w-full max-w-md transition-colors duration-300`}>
+
+        <div className="flex justify-end mb-4">
+          <Switch
+            checked={theme === 'dark'}
+            onChange={toggleTheme}
+            checkedChildren={<MoonOutlined />}
+            unCheckedChildren={<SunOutlined />}
+            className={`${theme === 'light' ? 'bg-gray-300' : 'bg-gray-600'}`}
+          />
+        </div>
+
+        <h2 className={`text-2xl font-bold mb-6 ${theme === 'light' ? 'text-gray-800' : 'text-white'}`}>Criar Usuário</h2>
         <Form form={form} layout="vertical" onFinish={onFinish}>
           <Form.Item
-            label="Name"
+            label={<span className={theme === 'light' ? 'text-gray-700' : 'text-gray-300'}>Nome</span>}
             name="name"
-            rules={[{ required: true, message: 'Please enter your name!' }]}
+            rules={[{ required: true, message: 'Por favor, insira seu nome!' }]}
           >
-            <Input />
+            <Input className={`w-full p-2 rounded ${theme === 'light' ? 'bg-white border-gray-300' : 'bg-gray-700 border-gray-600 text-white'}`} />
           </Form.Item>
           <Form.Item
-            label="Email"
+            label={<span className={theme === 'light' ? 'text-gray-700' : 'text-gray-300'}>Email</span>}
             name="email"
-            rules={[{ required: true, message: 'Please enter your email!' }, { type: 'email', message: 'Invalid email format' }]}
+            rules={[
+              { required: true, message: 'Por favor, insira seu email!' },
+              { type: 'email', message: 'Formato de email inválido' },
+            ]}
           >
-            <Input />
+            <Input className={`w-full p-2 rounded ${theme === 'light' ? 'bg-white border-gray-300' : 'bg-gray-700 border-gray-600 text-white'}`} />
           </Form.Item>
           <Form.Item
-            label="Password"
+            label={<span className={theme === 'light' ? 'text-gray-700' : 'text-gray-300'}>Senha</span>}
             name="password"
-            rules={[{ required: true, message: 'Please enter your password!' }, { min: 8, message: 'Password must be at least 8 characters' }]}
+            rules={[
+              { required: true, message: 'Por favor, insira sua senha!' },
+              { min: 8, message: 'A senha deve ter pelo menos 8 caracteres' },
+            ]}
           >
-            <Input.Password />
+            <Input.Password className={`w-full p-2 rounded ${theme === 'light' ? 'bg-white border-gray-300' : 'bg-gray-700 border-gray-600 text-white'}`} />
           </Form.Item>
           <Form.Item
-            label="Zip Code"
+            label={<span className={theme === 'light' ? 'text-gray-700' : 'text-gray-300'}>CEP</span>}
             name="zipCode"
-            rules={[{ required: true, message: 'Please enter your Zip Code!' }, { validator: validateZipCode }]}
+            rules={[
+              { required: true, message: 'Por favor, insira seu CEP!' },
+              { validator: validateZipCode },
+            ]}
           >
-            <Input />
+            <Input className={`w-full p-2 rounded ${theme === 'light' ? 'bg-white border-gray-300' : 'bg-gray-700 border-gray-600 text-white'}`} />
           </Form.Item>
           <Form.Item>
-            <Button type="primary" htmlType="submit" loading={loading} className="w-full">
-              {loading ? 'Creating...' : 'Create'}
+            <Button
+              type="primary"
+              htmlType="submit"
+              loading={loading}
+              className={`w-full py-2 rounded ${theme === 'light' ? 'bg-blue-500 hover:bg-blue-600' : 'bg-blue-700 hover:bg-blue-800'} text-white font-semibold transition-colors duration-300`}
+            >
+              {loading ? 'Criando...' : 'Criar'}
             </Button>
           </Form.Item>
         </Form>
       </div>
+      <Toaster
+        position="bottom-right"
+        reverseOrder={false}
+        toastOptions={{
+          className: theme === 'light' ? 'bg-white text-gray-800' : 'bg-gray-700 text-white',
+        }}
+      />
     </div>
   );
 };
