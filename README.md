@@ -19,7 +19,7 @@ Este projeto é o frontend para a aplicação de cadastro de usuários. Ele perm
 1.  **Clone o repositório:**
 
     ```bash
-    git clone <URL_DO_REPOSITORIO>
+    git clone https://github.com/wenderenzo/user_register.git
     ```
 
 2.  **Instalar as dependências:**
